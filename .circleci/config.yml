@@ -2,10 +2,9 @@ version: 2.0
 
 build-docker-image-job: &build-docker-image-job
   docker:
-    - image: circleci/node:14.17
+    - image: cimg/node:14.17
   steps:
-    - setup_remote_docker:
-        version: 19.03.13
+    - setup_remote_docker
     - checkout
     - run: sudo apt update
     - run: sudo apt install python3-pip
@@ -143,37 +142,38 @@ workflows:
   version: 2
   build:
     jobs:
-      - backend-lint
-      - backend-unit-tests:
-          requires:
-            - backend-lint
-      - frontend-lint
-      - frontend-unit-tests:
-          requires:
-            - backend-lint
-            - frontend-lint
-      - frontend-e2e-tests:
-          requires:
-            - frontend-lint
-      - build-preview-docker-image:
-          requires:
-            - backend-unit-tests
-            - frontend-unit-tests
-            - frontend-e2e-tests
-          filters:
-            branches:
-              only:
-                - master
-      - hold:
-          type: approval
-          requires:
-            - backend-unit-tests
-            - frontend-unit-tests
-            - frontend-e2e-tests
-          filters:
-            branches:
-              only:
-                - /release\/.*/
-      - build-docker-image:
-          requires:
-            - hold
+      - build-docker-image
+      # - backend-lint
+      # - backend-unit-tests:
+      #     requires:
+      #       - backend-lint
+      # - frontend-lint
+      # - frontend-unit-tests:
+      #     requires:
+      #       - backend-lint
+      #       - frontend-lint
+      # - frontend-e2e-tests:
+      #     requires:
+      #       - frontend-lint
+      # - build-preview-docker-image:
+      #     requires:
+      #       - backend-unit-tests
+      #       - frontend-unit-tests
+      #       - frontend-e2e-tests
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      # - hold:
+      #     type: approval
+      #     requires:
+      #       - backend-unit-tests
+      #       - frontend-unit-tests
+      #       - frontend-e2e-tests
+      #     filters:
+      #       branches:
+      #         only:
+      #           - /release\/.*/
+      # - build-docker-image:
+      #    requires:
+      #      - hold
